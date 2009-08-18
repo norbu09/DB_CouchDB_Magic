@@ -4,7 +4,7 @@ use warnings;
 use strict;
 use base 'DB::CouchDB';
 use MIME::Base64;
-use Unicode::String;
+use Encode;
 
 =head1 NAME
 
@@ -47,7 +47,7 @@ sub get_doc_encoded {
         $self->_call( GET => $self->_uri_db_doc($doc) ) );
     if ( $tmp->{base64} ) {
         foreach my $key ( @{ $tmp->{base64} } ) {
-            $tmp->{$key} = Unicode::String::utf8(decode_base64( $tmp->{$key} ));
+            $tmp->{$key} = decode( "UTF-8", decode_base64( $tmp->{$key} ) );
         }
         delete $tmp->{base64};
     }
@@ -65,12 +65,12 @@ sub update_doc_encoded {
     my $self = shift;
     my $name = shift;
     my $doc  = shift;
-    
-    foreach my $key (%{$doc}){
+
+    foreach my $key ( %{$doc} ) {
         next unless $doc->{$key};
-        if($doc->{$key} =~ /([^\x{00}-\x{7f}])/){
-            $doc->{$key} = encode_base64($doc->{$key});
-            push(@{$doc->{base64}}, $key);
+        if ( $doc->{$key} =~ /([^\x{00}-\x{7f}])/ ) {
+            $doc->{$key} = encode( "UTF-8", encode_base64( $doc->{$key} ) );
+            push( @{ $doc->{base64} }, $key );
         }
     }
 
@@ -82,7 +82,6 @@ sub update_doc_encoded {
         )
     );
 }
-
 
 =head1 AUTHOR
 

@@ -4,7 +4,7 @@ use warnings;
 use strict;
 use base 'DB::CouchDB';
 use MIME::Base64;
-use Encode;
+use Encoding::FixLatin qw(fix_latin);
 
 =head1 NAME
 
@@ -47,7 +47,7 @@ sub get_doc_encoded {
         $self->_call( GET => $self->_uri_db_doc($doc) ) );
     if ( $tmp->{base64} ) {
         foreach my $key ( @{ $tmp->{base64} } ) {
-            $tmp->{$key} = decode( "UTF-8", decode_base64( $tmp->{$key} ) );
+            $tmp->{$key} = fix_latin( decode_base64( $tmp->{$key} ) );
         }
         delete $tmp->{base64};
     }
@@ -68,8 +68,9 @@ sub update_doc_encoded {
 
     foreach my $key ( %{$doc} ) {
         next unless $doc->{$key};
+        $doc->{$key} = fix_latin( $doc->{$key} );
         if ( $doc->{$key} =~ /([^\x{00}-\x{7f}])/ ) {
-            $doc->{$key} = encode( "UTF-8", encode_base64( $doc->{$key} ) );
+            $doc->{$key} = encode_base64( $doc->{$key} );
             push( @{ $doc->{base64} }, $key );
         }
     }

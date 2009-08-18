@@ -48,6 +48,7 @@ sub get_doc_encoded {
         foreach my $key ( @{ $tmp->{base64} } ) {
             $tmp->{$key} = decode_base64( $tmp->{$key} );
         }
+        delete $tmp->{base64};
     }
     return $tmp;
 }
@@ -68,8 +69,7 @@ sub update_doc_encoded {
         next unless $doc->{$key};
         if($doc->{$key} =~ /([^\x{00}-\x{7f}])/){
             $doc->{$key} = encode_base64($doc->{$key});
-            push(@{$doc->{base64}}, $key)
-                unless grep(/^$key$/, @{$doc->{base64}});
+            push(@{$doc->{base64}}, $key);
         }
     }
 

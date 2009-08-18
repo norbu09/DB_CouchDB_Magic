@@ -13,10 +13,11 @@ my $db = DB::CouchDB::Magic->new(
     db   => 'umleitung',
 );
 my $_doc = $db->get_doc_encoded( $doc );
-#$_doc->{blubb} = 'blablubbü';
+$_doc->{blubb} = 'blablubbü';
 #$_doc->{blbb} = 'blubbüaa';
-#$db->handle_blessed(1);
-#my $res = $db->update_doc_encoded( $doc, $_doc );
+delete $_doc->{blbb};
+$db->handle_blessed(1);
+my $res = $db->update_doc_encoded( $doc, $_doc );
 
-#print Dumper($res);
-print Dumper($_doc);
+print Dumper($res);
+#print Dumper($_doc);

@@ -4,6 +4,7 @@ use warnings;
 use strict;
 use base 'DB::CouchDB';
 use MIME::Base64;
+use Unicode::String;
 
 =head1 NAME
 
@@ -46,7 +47,7 @@ sub get_doc_encoded {
         $self->_call( GET => $self->_uri_db_doc($doc) ) );
     if ( $tmp->{base64} ) {
         foreach my $key ( @{ $tmp->{base64} } ) {
-            $tmp->{$key} = decode_base64( $tmp->{$key} );
+            $tmp->{$key} = Unicode::String::utf8(decode_base64( $tmp->{$key} ));
         }
         delete $tmp->{base64};
     }

@@ -1,0 +1,45 @@
+DB-CouchDB-Magic
+
+This is an extension of DB::CouchDB that handles some corner cases with
+extension functions. This will most likely be obsolete some time but for
+now it is a live safer. Look into the man page for the additional
+functions and into the DB::CouchDB man page for general usage.
+
+INSTALLATION
+
+To install this module, run the following commands:
+
+	perl Makefile.PL
+	make
+	make test
+	make install
+
+SUPPORT AND DOCUMENTATION
+
+After installing, you can find documentation for this module with the
+perldoc command.
+
+    perldoc DB::CouchDB::Magic
+
+You can also look for information at:
+
+    RT, CPAN's request tracker
+        http://rt.cpan.org/NoAuth/Bugs.html?Dist=DB-CouchDB-Magic
+
+    AnnoCPAN, Annotated CPAN documentation
+        http://annocpan.org/dist/DB-CouchDB-Magic
+
+    CPAN Ratings
+        http://cpanratings.perl.org/d/DB-CouchDB-Magic
+
+    Search CPAN
+        http://search.cpan.org/dist/DB-CouchDB-Magic/
+
+
+COPYRIGHT AND LICENCE
+
+Copyright (C) 2009 Lenz Gschwendtner
+
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
+

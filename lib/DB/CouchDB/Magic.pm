@@ -5,6 +5,7 @@ use strict;
 use base 'DB::CouchDB';
 use MIME::Base64;
 use Encoding::FixLatin qw(fix_latin);
+use Data::Dumper;
 
 =head1 NAME
 
@@ -45,13 +46,7 @@ sub get_doc_encoded {
     my $doc  = shift;
     my $tmp  = DB::CouchDB::Result->new(
         $self->_call( GET => $self->_uri_db_doc($doc) ) );
-    if ( $tmp->{base64} ) {
-        foreach my $key ( @{ $tmp->{base64} } ) {
-            $tmp->{$key} = fix_latin( decode_base64( $tmp->{$key} ) );
-        }
-        delete $tmp->{base64};
-    }
-    return $tmp;
+    return $self->_decode($tmp);
 }
 
 =head2 update_doc_encoded
@@ -82,6 +77,48 @@ sub update_doc_encoded {
             $jdoc
         )
     );
+}
+
+=head2 view_encoded
+
+works like view but decodes Base64 encoded filds defined in the key
+"base64" as an array. This function returns the same DB::CouchDB::Iter
+object $db->view would.
+
+=cut
+
+sub view_encoded {
+    my $self = shift;
+    my $view = shift;
+    my $args = shift;                        ## do we want to reduce the view?
+    my $uri  = $self->_uri_db_view($view);
+    if ($args) {
+        my $argstring = _valid_view_args($args);
+        $uri->query($argstring);
+    }
+    my $iter = DB::CouchDB::Iter->new( $self->_call( GET => $uri ) );
+    my @data;
+    while ( my $doc = $iter->next() ) {
+        push(@data, $self->_decode($doc));
+    }
+    $iter->data(@data);
+    return $iter;
+}
+
+######################################################
+## internal stuff
+######################################################
+
+sub _decode {
+    my $self = shift;
+    my $doc  = shift;
+    if ( $doc->{base64} ) {
+        foreach my $key ( @{ $doc->{base64} } ) {
+            $doc->{$key} = fix_latin( decode_base64( $doc->{$key} ) );
+        }
+        delete $doc->{base64};
+    }
+    return $doc;
 }
 
 =head1 AUTHOR

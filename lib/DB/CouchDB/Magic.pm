@@ -49,6 +49,31 @@ sub get_doc_encoded {
     return _decode($tmp);
 }
 
+=head2 create_doc_encoded
+
+works like create_doc but encodes non ASCII characters to Base64 values
+and pushes the key into the "base64" array.
+
+=cut
+
+sub create_doc_encoded {
+    my $self = shift;
+    my $doc  = shift;
+
+    foreach my $key ( %{$doc} ) {
+        next unless $doc->{$key};
+        $doc->{$key} = fix_latin( $doc->{$key} );
+        if ( $doc->{$key} =~ /([^\x{00}-\x{7f}])/ ) {
+            $doc->{$key} = encode_base64( $doc->{$key} );
+            push( @{ $doc->{base64} }, $key );
+        }
+    }
+    my $jdoc = $self->json()->encode($doc);
+    return DB::CouchDB::Result->new(
+        $self->_call(POST => $self->_uri_db(), $jdoc)
+    );
+}
+
 =head2 update_doc_encoded
 
 works like update_doc but encodes non ASCII characters to Base64 values

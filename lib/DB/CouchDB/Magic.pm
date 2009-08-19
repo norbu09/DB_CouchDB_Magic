@@ -46,7 +46,7 @@ sub get_doc_encoded {
     my $doc  = shift;
     my $tmp  = DB::CouchDB::Result->new(
         $self->_call( GET => $self->_uri_db_doc($doc) ) );
-    return $self->_decode($tmp);
+    return _decode($tmp);
 }
 
 =head2 update_doc_encoded
@@ -99,7 +99,7 @@ sub view_encoded {
     my $iter = DB::CouchDB::Iter->new( $self->_call( GET => $uri ) );
     my @data;
     while ( my $doc = $iter->next() ) {
-        push(@data, $self->_decode($doc));
+        push( @data, _decode($doc) );
     }
     $iter->data(@data);
     return $iter;
@@ -110,8 +110,7 @@ sub view_encoded {
 ######################################################
 
 sub _decode {
-    my $self = shift;
-    my $doc  = shift;
+    my $doc = shift;
     if ( $doc->{base64} ) {
         foreach my $key ( @{ $doc->{base64} } ) {
             $doc->{$key} = fix_latin( decode_base64( $doc->{$key} ) );
@@ -119,6 +118,16 @@ sub _decode {
         delete $doc->{base64};
     }
     return $doc;
+}
+
+# only copied from the original lib as it was not exported
+sub _valid_view_args {
+    my $args = shift;
+    my $string;
+    my @str_parts = map { "$_=$args->{$_}" } keys %$args;
+    $string = join( '&', @str_parts );
+
+    return $string;
 }
 
 =head1 AUTHOR

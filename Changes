@@ -1,5 +1,9 @@
 Revision history for DB-CouchDB-Magic
 
-0.01    Date/time
+0.01    18-08-2009
         First version, released on an unsuspecting world.
 
+0.02    07-09-2009
+        Introduced limitation - I skip HASH and ARRAY values now - had
+        hard to debug bugs there. Will need more investigation once more
+        time to play with ...

@@ -17,7 +17,7 @@ Version 0.01
 
 =cut
 
-our $VERSION = '0.01';
+our $VERSION = '1.02';
 
 =head1 SYNOPSIS
 
@@ -62,6 +62,7 @@ sub create_doc_encoded {
 
     foreach my $key ( %{$doc} ) {
         next unless $doc->{$key};
+        next if $doc->{$key} =~ /^[ARRAY|HASH]/;
         $doc->{$key} = fix_latin( $doc->{$key} );
         if ( $doc->{$key} =~ /([^\x{00}-\x{7f}])/ ) {
             $doc->{$key} = encode_base64( $doc->{$key} );
@@ -88,6 +89,7 @@ sub update_doc_encoded {
 
     foreach my $key ( %{$doc} ) {
         next unless $doc->{$key};
+        next if $doc->{$key} =~ /^[ARRAY|HASH]/;
         $doc->{$key} = fix_latin( $doc->{$key} );
         if ( $doc->{$key} =~ /([^\x{00}-\x{7f}])/ ) {
             $doc->{$key} = encode_base64( $doc->{$key} );

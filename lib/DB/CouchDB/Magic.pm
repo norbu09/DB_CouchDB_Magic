@@ -144,6 +144,12 @@ sub _decode {
         }
         delete $doc->{base64};
     }
+    elsif ( $doc->{value} && $doc->{value}->{base64} ) {
+        foreach my $key ( @{ $doc->{value}->{base64} } ) {
+            $doc->{value}->{$key} = fix_latin( decode_base64( $doc->{value}->{$key} ) );
+        }
+        delete $doc->{value}->{base64};
+    }
     return $doc;
 }
 

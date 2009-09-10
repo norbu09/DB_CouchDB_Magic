@@ -62,12 +62,7 @@ sub create_doc_encoded {
 
     foreach my $key ( %{$doc} ) {
         next unless $doc->{$key};
-        next if $doc->{$key} =~ /^[ARRAY|HASH]/;
         $doc->{$key} = fix_latin( $doc->{$key} );
-        if ( $doc->{$key} =~ /([^\x{00}-\x{7f}])/ ) {
-            $doc->{$key} = encode_base64( $doc->{$key} );
-            push( @{ $doc->{base64} }, $key );
-        }
     }
     my $jdoc = $self->json()->encode($doc);
     return DB::CouchDB::Result->new(
@@ -89,12 +84,7 @@ sub update_doc_encoded {
 
     foreach my $key ( %{$doc} ) {
         next unless $doc->{$key};
-        next if $doc->{$key} =~ /^[ARRAY|HASH]/;
         $doc->{$key} = fix_latin( $doc->{$key} );
-        if ( $doc->{$key} =~ /([^\x{00}-\x{7f}])/ ) {
-            $doc->{$key} = encode_base64( $doc->{$key} );
-            push( @{ $doc->{base64} }, $key );
-        }
     }
 
     my $jdoc = $self->json()->encode($doc);
@@ -143,12 +133,6 @@ sub _decode {
             $doc->{$key} = fix_latin( decode_base64( $doc->{$key} ) );
         }
         delete $doc->{base64};
-    }
-    elsif ( $doc->{value} && $doc->{value}->{base64} ) {
-        foreach my $key ( @{ $doc->{value}->{base64} } ) {
-            $doc->{value}->{$key} = fix_latin( decode_base64( $doc->{value}->{$key} ) );
-        }
-        delete $doc->{value}->{base64};
     }
     return $doc;
 }

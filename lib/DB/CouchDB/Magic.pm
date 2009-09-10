@@ -62,6 +62,7 @@ sub create_doc_encoded {
 
     foreach my $key ( %{$doc} ) {
         next unless $doc->{$key};
+        next if $doc->{$key} =~ /^[ARRAY|HASH]/;
         $doc->{$key} = fix_latin( $doc->{$key} );
     }
     my $jdoc = $self->json()->encode($doc);
@@ -84,6 +85,7 @@ sub update_doc_encoded {
 
     foreach my $key ( %{$doc} ) {
         next unless $doc->{$key};
+        next if $doc->{$key} =~ /^[ARRAY|HASH]/;
         $doc->{$key} = fix_latin( $doc->{$key} );
     }
 

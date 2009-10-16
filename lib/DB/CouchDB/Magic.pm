@@ -86,7 +86,11 @@ sub update_doc_encoded {
     foreach my $key ( %{$doc} ) {
         next unless $doc->{$key};
         next if $doc->{$key} =~ /^[ARRAY|HASH]/;
-        $doc->{$key} = fix_latin( $doc->{$key} );
+        if($doc->{$key} =~ /^\d+$/){
+            $doc->{$key} = int($doc->{$key});
+        } else {
+            $doc->{$key} = fix_latin( $doc->{$key} );
+        }
     }
 
     my $jdoc = $self->json()->encode($doc);

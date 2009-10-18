@@ -63,7 +63,13 @@ sub create_doc_encoded {
     foreach my $key ( %{$doc} ) {
         next unless $doc->{$key};
         next if $doc->{$key} =~ /^[ARRAY|HASH]/;
-        $doc->{$key} = fix_latin( $doc->{$key} );
+        if($doc->{$key} =~ /^\d+$/){
+            print STDERR "TO NUMBER: >>".$doc->{$key}."<<\n";
+            $doc->{$key} = int($doc->{$key});
+        } else {
+            print STDERR "TO STRING: >>".$doc->{$key}."<<\n";
+            $doc->{$key} = fix_latin( $doc->{$key} );
+        }
     }
     my $jdoc = $self->json()->encode($doc);
     return DB::CouchDB::Result->new(
@@ -86,8 +92,9 @@ sub update_doc_encoded {
     foreach my $key ( %{$doc} ) {
         next unless $doc->{$key};
         next if $doc->{$key} =~ /^[ARRAY|HASH]/;
+        print STDERR "TO STRING: >>".$doc->{$key}."<<\n";
         if($doc->{$key} =~ /^\d+$/){
-            $doc->{$key} = int($doc->{$key});
+            $doc->{$key} += 0;
         } else {
             $doc->{$key} = fix_latin( $doc->{$key} );
         }
